@@ -1,6 +1,7 @@
 #!/bin/bash
 RED='\033[0;31m'
 NOCOLOR='\033[0m'
+cd /root
 if [[ $EUID -ne 0 ]]; then
 	echo "This script must be run as root" 
 	exit 1
@@ -66,7 +67,7 @@ EOFSS
 		proxytype=ssh
 	done
 	cd /root
-	mv 9Hits-AutoInstall-master/* ./
+	mv 9Hits-AutoInstall/* ./
 	crontab crontab
 	chmod 777 -R /root
 	rm 9h* crontab

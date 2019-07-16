@@ -41,19 +41,11 @@ else
 			;;
 	esac
 	apt update
-        apt upgrade -y
-        apt install -y unzip libcanberra-gtk-module curl libxss1 xvfb htop sed tar
-        wget https://www.dropbox.com/s/u13w9qcbqd5c0fx/9hviewer-linux-x64-2.3.9.tar.bz2
-	curl -L -o crontab "https://drive.google.com/uc?export=download&id=1RjhqDfdc_b89G3SqD6J2EUY6UaKIooV9"
-        curl -L -o script.sh "https://drive.google.com/uc?export=download&id=1dQ32aV5mzep9xQXrfd9hQjEjvPCJqUMY"
-	wget "https://www.dropbox.com/s/h4o9hozm8v5t58h/test.sh"
-        curl -L -o reboot.sh "https://drive.google.com/uc?export=download&id=1Bl5_K1aL78q6UIkOdXriS26HG4aWjOeJ"
-        sed -i -e 's/\r$//' script.sh
-        sed -i -e 's/\r$//' crontab
-        sed -i -e 's/\r$//' test.sh
-        sed -i -e 's/\r$//' reboot.sh
-        tar -xjvf 9hviewer-linux-x64-2.3.9.tar.bz2
-        cd /root/9HitsViewer_x64/sessions/
+    apt upgrade -y
+    apt install -y unzip libcanberra-gtk-module curl libxss1 xvfb htop sed tar libxtst6 libnss3
+    wget https://www.dropbox.com/s/u13w9qcbqd5c0fx/9hviewer-linux-x64-2.3.9.tar.bz2
+    tar -xjvf 9hviewer-linux-x64-2.3.9.tar.bz2
+    cd /root/9HitsViewer_x64/sessions/
 	isproxy=false
 	for i in `seq 1 $number`;
         do
@@ -74,6 +66,7 @@ EOFSS
 		proxytype=ssh
 	done
 	cd /root
+	mv 9Hits-AutoInstall-master/* ./
 	crontab crontab
 	chmod 777 -R /root
 	rm 9h* crontab

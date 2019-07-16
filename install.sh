@@ -1,5 +1,6 @@
 #!/bin/bash
 RED='\033[0;31m'
+GREEN='\033[0;32m'
 NOCOLOR='\033[0m'
 cd /root
 if [[ $EUID -ne 0 ]]; then
@@ -10,7 +11,7 @@ else
 	echo  "Enter your TOKEN"
 	read token
 	echo "------------------------------------------------------------------------"
-	echo "How much sessions you want, chosse 1 or 2"
+	echo "How much sessions you want, choose 1 or 2"
 	echo "1) Automatic max session based on system      2) Use number you want"
 	read option
 	echo "------------------------------------------------------------------------"
@@ -33,7 +34,7 @@ else
 		2)
 			echo "How much you want"
 			echo -e "${RED}WARNING"
-			echo -e "${RED}IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED ${NOCOLOR}"
+			echo -e "${RED}IF YOU SET EXCESSIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED ${NOCOLOR}"
 			read number
 			;;
 		*)

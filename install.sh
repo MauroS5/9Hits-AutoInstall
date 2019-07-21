@@ -53,11 +53,12 @@ else
         wget https://www.dropbox.com/s/u13w9qcbqd5c0fx/9hviewer-linux-x64-2.3.9.tar.bz2
         tar -xjvf 9hviewer-linux-x64-2.3.9.tar.bz2
         cd /root/9HitsViewer_x64/sessions/
-        isproxy=false
-        for i in `seq 1 $number`;
+    isproxy=false
+    for i in `seq 1 $number`;
         do
-				file="/root/9HitsViewer_x64/sessions/156288217488$i.txt"
-  cat > $file <<EOFSS                                                                                                                                                                                                                          {
+        file="/root/9HitsViewer_x64/sessions/156288217488$i.txt"
+cat > $file <<EOFSS
+{
   "token": "$token",
   "note": "",
   "proxyType": "system",
@@ -68,9 +69,9 @@ else
   "isUse9HitsProxy": $isproxy
 }
 EOFSS
-                isproxy=true
-                proxytype=ssh
-        done
+        isproxy=true
+        proxytype=ssh
+    done
         cd /root
         mv 9Hits-AutoInstall/* ./
         crontab crontab

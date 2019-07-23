@@ -70,6 +70,7 @@ else
                     fi
                     ;;
             "3)")
+                    whiptail --title "WARNING" --msgbox "${RED}IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED ${NOCOLOR}" 8 78
                     number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
                     numberstatus=$?
                     if [ $numberstatus = 0 ]; then

@@ -46,35 +46,39 @@ else
                 exit
         fi
         option=$(whiptail --title "How much sessions you want" --menu "Choose an option" 16 100 9 \
-        "1)" "Automatic max session based on system"   \
-        "2)" "Use number you want"  3>&2 2>&1 1>&3
+        "1)" "Use one session"   \
+        "2)" "Automatic max session based on system"   \
+        "3)" "Use number you want"  3>&2 2>&1 1>&3
         )
         case $option in
-                "1)")
-                        cores=`nproc --all`
-                        memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
-                        memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
-                        let memtotal=$memphy+$memswap
-                        let memtotalgb=$memtotal/100000
-                        let sscorelimit=$cores*5
-                        let ssmemlimit=$memtotalgb*5/10
-                        if [[ $sscorelimit -le $ssmemlimit ]]
-                        then
-                                number=$sscorelimit
-                        else
-                                number=$ssmemlimit
-                        fi
-                        ;;
-                "2)")
-                        number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
-                        numberstatus=$?
-                        if [ $numberstatus = 0 ]; then
-                                echo "All right"
-                        else
-                                echo "User selected Cancel"
-                                exit
-                                fi
-                        ;;
+            "1)")
+                    number=1
+                    ;;
+            "2)")
+                    cores=`nproc --all`
+                    memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                    memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                    let memtotal=$memphy+$memswap
+                    let memtotalgb=$memtotal/100000
+                    let sscorelimit=$cores*5
+                    let ssmemlimit=$memtotalgb*5/10
+                    if [[ $sscorelimit -le $ssmemlimit ]]
+                    then
+                            number=$sscorelimit
+                    else
+                            number=$ssmemlimit
+                    fi
+                    ;;
+            "3)")
+                    number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
+                    numberstatus=$?
+                    if [ $numberstatus = 0 ]; then
+                            echo "All right"
+                    else
+                            echo "User selected Cancel"
+                            exit
+                            fi
+                    ;;
         esac
         if [ $os == "1" ] || [ $os == "2" ]; then
                 apt-get update

@@ -1,7 +1,4 @@
 #!/bin/bash
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-NOCOLOR='\033[0m'
 cd /root
 if [[ $EUID -ne 0 ]]; then
         whiptail --title "ERROR" --msgbox "This script must be run as root" 8 78
@@ -55,7 +52,13 @@ else
                     number=1
                     ;;
             "2)")
-                    whiptail --title "WARNING" --msgbox "${RED}THIS CAN GET A YELLOW/RED FACE || RECOMMENDED USE A SINGLE SESSION ${NOCOLOR}" 8 78
+                    export NEWT_COLORS='
+                    window=,red
+                    border=white,red
+                    textbox=white,red
+                    button=black,white
+                    '
+                    whiptail --title "WARNING" --msgbox "THIS CAN GET A YELLOW/RED FACE || RECOMMENDED USE A SINGLE SESSION" 8 78
                     cores=`nproc --all`
                     memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
                     memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
@@ -71,7 +74,13 @@ else
                     fi
                     ;;
             "3)")
-                    whiptail --title "WARNING" --msgbox "${RED}IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED || RECOMMENDED USE A SINGLE SESSION ${NOCOLOR}" 8 78
+                    export NEWT_COLORS='
+                    window=,red
+                    border=white,red
+                    textbox=white,red
+                    button=black,white
+                    '
+                    whiptail --title "WARNING" --msgbox "IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED || RECOMMENDED USE A SINGLE SESSION" 8 78
                     number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
                     numberstatus=$?
                     if [ $numberstatus = 0 ]; then

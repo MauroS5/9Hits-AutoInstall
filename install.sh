@@ -60,8 +60,8 @@ else
                     memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
                     let memtotal=$memphy+$memswap
                     let memtotalgb=$memtotal/100000
-                    let sscorelimit=$cores*5
-                    let ssmemlimit=$memtotalgb*5/10
+                    let sscorelimit=$cores*4
+                    let ssmemlimit=$memtotalgb*4/10
                     if [[ $sscorelimit -le $ssmemlimit ]]
                     then
                             number=$sscorelimit

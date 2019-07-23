@@ -86,7 +86,7 @@ else
                 apt-get install -y unzip libcanberra-gtk-module curl libxss1 xvfb htop sed tar libxtst6 libnss3 wget
         else
                 yum -y update
-                yum install -y unzip curl xorg-x11-server-Xvfb sed tar Xvfb wget
+                yum install -y unzip curl xorg-x11-server-Xvfb sed tar Xvfb wget bzip2
         fi
                 wget https://www.dropbox.com/s/u13w9qcbqd5c0fx/9hviewer-linux-x64-2.3.9.tar.bz2
                 tar -xjvf 9hviewer-linux-x64-2.3.9.tar.bz2

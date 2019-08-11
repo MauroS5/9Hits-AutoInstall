@@ -149,6 +149,5 @@ EOFSS
     mv 9Hits-AutoInstall/* ./
     crontab crontab
     chmod 777 -R /root
-    rm 9h* 9Hits-AutoInstall
     exit
 fi

@@ -114,6 +114,14 @@ else
                             fi
                     ;;
         esac
+        cpumax=$(whiptail --inputbox "Enter max % of cpu you want set per page" 8 78 --title "Max Cpu" 3>&1 1>&2 2>&3)
+        cpumaxstatus=$?
+        if [ $cpumaxstatus = 0 ]; then
+                echo "All right"
+        else
+                echo "User selected Cancel"
+                exit
+        fi
     fi
     if [ $os == "1" ] || [ $os == "2" ]; then
         apt-get update
@@ -138,7 +146,7 @@ cat > $file <<EOFSS
   "proxyServer": "",
   "proxyUser": "",
   "proxyPw": "",
-  "maxCpu": 10,
+  "maxCpu": $cpumax,
   "isUse9HitsProxy": $isproxy
 }
 EOFSS

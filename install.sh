@@ -26,6 +26,7 @@ else
         esac
         token=$2
         number=1
+        cpumax=100
     else
         os=$(whiptail --title "What Linux Distro do you have?" --menu "Choose an option" 16 100 9 \
         "1)" "Ubuntu"   \

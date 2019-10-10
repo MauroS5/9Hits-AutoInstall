@@ -28,54 +28,55 @@ else
         number=1
         cpumax=100
     else
-        os=$(whiptail --title "What Linux Distro do you have?" --menu "Choose an option" 16 100 9 \
-        "1)" "Ubuntu"   \
-        "2)" "Debian"   \
-        "3)" "CentOS"   \
-        "4)" "Any of that"      \
-        "5)" "Dont know"        3>&2 2>&1 1>&3
-        )
-        case $os in
-            "1)")
-                os=1
-                ;;
-            "2)")
-                os=2
-                ;;
-            "3)")
-                os=3
-                ;;
-            "4)")
-                echo "Sorry, for the moment this script does not support your Distro"
-                exit
-                ;;
-            "5)")
-                echo "Trying detect and install automatic"
-                os=`awk -F= '/^NAME/{print $2}' /etc/os-release`
-                if [ $os == '"Ubuntu"' ]; then
+        if [[ $1 -eq 1 ]]; then
+            os=$(whiptail --title "What Linux Distro do you have?" --menu "Choose an option" 16 100 9 \
+            "1)" "Ubuntu"   \
+            "2)" "Debian"   \
+            "3)" "CentOS"   \
+            "4)" "Any of that"      \
+            "5)" "Dont know"        3>&2 2>&1 1>&3
+            )
+            case $os in
+                "1)")
                     os=1
-                else
+                    ;;
+                "2)")
+                    os=2
+                    ;;
+                "3)")
                     os=3
-                fi
-        esac
-        token=$(whiptail --inputbox "Enter your TOKEN" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
-        tokenstatus=$?
-        if [ $tokenstatus = 0 ]; then
-                echo "All right"
-        else
-                echo "User selected Cancel"
-                exit
-        fi
-        option=$(whiptail --title "How much sessions you want" --menu "Choose an option" 16 100 9 \
-        "1)" "Use one session"   \
-        "2)" "Automatic max session based on system"   \
-        "3)" "Use number you want"  3>&2 2>&1 1>&3
-        )
-        case $option in
-            "1)")
+                    ;;
+                "4)")
+                    echo "Sorry, for the moment this script does not support your Distro"
+                    exit
+                   ;;
+                "5)")
+                    echo "Trying detect and install automatic"
+                    os=`awk -F= '/^NAME/{print $2}' /etc/os-release`
+                    if [ $os == '"Ubuntu"' ]; then
+                        os=1
+                    else
+                        os=3
+                    fi
+            esac
+            token=$(whiptail --inputbox "Enter your TOKEN" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
+            tokenstatus=$?
+            if [ $tokenstatus = 0 ]; then
+                    echo "All right"
+            else
+                    echo "User selected Cancel"
+                    exit
+            fi
+            option=$(whiptail --title "How much sessions you want" --menu "Choose an option" 16 100 9 \
+            "1)" "Use one session"   \
+            "2)" "Automatic max session based on system"   \
+            "3)" "Use number you want"  3>&2 2>&1 1>&3
+            )
+            case $option in
+                "1)")
                     number=1
                     ;;
-            "2)")
+                "2)")
                     export NEWT_COLORS='
                     window=,red
                     border=white,red
@@ -92,12 +93,12 @@ else
                     let ssmemlimit=$memtotalgb*4/10
                     if [[ $sscorelimit -le $ssmemlimit ]]
                     then
-                            number=$sscorelimit
+                        number=$sscorelimit
                     else
-                            number=$ssmemlimit
+                        number=$ssmemlimit
                     fi
                     ;;
-            "3)")
+                "3)")
                     export NEWT_COLORS='
                     window=,red
                     border=white,red
@@ -108,26 +109,60 @@ else
                     number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
                     numberstatus=$?
                     if [ $numberstatus = 0 ]; then
-                            echo "All right"
+                        echo "All right"
                     else
-                            echo "User selected Cancel"
-                            exit
-                            fi
+                        echo "User selected Cancel"
+                        exit
+                    fi
                     ;;
-        esac
-        cpumax=$(whiptail --inputbox "Enter max % of cpu you want set per page" 8 78 --title "Max Cpu" 3>&1 1>&2 2>&3)
-        cpumaxstatus=$?
-        if [ $cpumaxstatus = 0 ]; then
+            esac
+            cpumax=$(whiptail --inputbox "Enter max % of cpu you want set per page" 8 78 --title "Max Cpu" 3>&1 1>&2 2>&3)
+            cpumaxstatus=$?
+            if [ $cpumaxstatus = 0 ]; then
                 echo "All right"
-        else
+            else
                 echo "User selected Cancel"
                 exit
+            fi
+        else
+            if [[ $1 -eq 2 ]]; then
+                if [[ $# -eq 4 ]]; then
+                    if [  -f /etc/os-release  ]; then
+                    dist=$(awk -F= '$1 == "ID" {gsub("\"", ""); print$2}' /etc/os-release)
+                    elif [ -f /etc/redhat-release ]; then
+                        dist=$(awk '{print tolower($1)}' /etc/redhat-release)
+                    else
+                        whiptail --title "ERROR" --msgbox "Sorry, for the moment this script does not support your Distro" 8 78
+                    fi
+                    case "${dist}" in
+                    debian|ubuntu)
+                        os=1
+                        ;;
+                    centos)
+                        os=3
+                        ;;
+                    *)
+                        whiptail --title "ERROR" --msgbox "Sorry, for the moment this script does not support your Distro" 8 78
+                        exit
+                        ;;
+                    esac
+                    token=$2
+                    number=$3
+                    cpumax=$4
+                else
+                    whiptail --title "ERROR" --msgbox 'Please add all information: \n 1."Type of install (0, 1, 2)" \n 2."Token"\n 3."Number of sessions" \n 4."maxCpu (Only number, dont use %)"' 11 90
+                    exit
+                fi
+            else
+                whiptail --title "ERROR" --msgbox 'Please selet type of install (0, 1, 2)' 11 90
+                exit
+            fi
         fi
     fi
     if [ $os == "1" ] || [ $os == "2" ]; then
         apt-get update
         apt-get upgrade -y
-        apt-get install -y unzip libcanberra-gtk-module curl libxss1 xvfb htop sed tar libxtst6 libnss3 wget
+        apt-get install -y unzip libcanberra-gtk-module curl libxss1 xvfb htop sed tar libxtst6 libnss3 wget psmisc
     else
         yum -y update
         yum install -y unzip curl xorg-x11-server-Xvfb sed tar Xvfb wget bzip2 libXcomposite-0.4.4-4.1.el7.x86_64 libXScrnSaver libXcursor-1.1.15-1.el7.x86_64 libXi-1.7.9-1.el7.x86_64 libXtst-1.2.3-1.el7.x86_64 fontconfig-2.13.0-4.3.el7.x86_64 libXrandr-1.5.1-2.el7.x86_64 alsa-lib-1.1.6-2.el7.x86_64 pango-1.42.4-1.el7.x86_64 atk-2.28.1-1.el7.x86_64 psmisc

@@ -2,6 +2,7 @@
 AutoInstall for Linux
 
 You have 3 types of install
+
 0. Simple version, you dont need do nothing, you will get only 1 sessions (System)
 
 Example command:

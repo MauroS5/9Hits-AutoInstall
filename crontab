@@ -1,3 +1,0 @@
-* * * * * /root/crashdetect.sh
-1,31 * * * * /root/kill.sh
-58 23 * * * /root/reboot.sh

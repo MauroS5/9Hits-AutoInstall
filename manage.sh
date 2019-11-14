@@ -40,7 +40,7 @@ else
             )
             case $option in
                 "1)")
-                    cronvar="1,31 * * * * /root/9Hits/ill.sh"
+                    cronvar="1,31 * * * * /root/9Hits/kill.sh"
                     ;;
                 "2)")
                     cronvar="1 * * * * /root/9Hits/kill.sh"

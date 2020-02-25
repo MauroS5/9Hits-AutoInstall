@@ -28,7 +28,7 @@ else
         token=$2
         number=1
         cpumax=100
-        cronvar="1,31 * * * * /root/9Hits/ill.sh"
+        cronvar="1,31 * * * * /root/9Hits/kill.sh"
     else
         if [[ $1 -eq 1 ]]; then
             os=$(whiptail --title "What Linux Distro do you have?" --menu "Choose an option" 16 100 9 \
@@ -79,7 +79,7 @@ else
             )
             case $option in
                 "1)")
-                    cronvar="1,31 * * * * /root/9Hits/ill.sh"
+                    cronvar="1,31 * * * * /root/9Hits/kill.sh"
                     ;;
                 "2)")
                     cronvar="1 * * * * /root/9Hits/kill.sh"

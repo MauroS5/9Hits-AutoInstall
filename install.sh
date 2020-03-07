@@ -232,6 +232,7 @@ cat > $file <<EOFSS
   "proxyServer": "",
   "proxyUser": "",
   "proxyPw": "",
+  "maxCpu": $cpumax,
   "useExProxy": $isproxy,
   "exProxyServer": "",
   "exPorxyDomain": ""

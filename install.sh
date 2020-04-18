@@ -100,7 +100,8 @@ else
             option=$(whiptail --title "How much sessions you want" --menu "Choose an option" 16 100 9 \
             "1)" "Use one session"   \
             "2)" "Automatic max session based on system"   \
-            "3)" "Use number you want"  3>&2 2>&1 1>&3
+            "3)" "Use number you want"  \
+            "4)" "Use external server"  3>&2 2>&1 1>&3
             )
             case $option in
                 "1)")
@@ -144,6 +145,40 @@ else
                         echo "User selected Cancel"
                         exit
                     fi
+                    ;;
+                "3)")
+                    exProxyServer=$(whiptail --inputbox "Enter your proxy server link (Just link -> http://example.com/index.php)" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
+                    tokenstatus=$?
+                    if [ $tokenstatus = 0 ]; then
+                        echo "All right"
+                    else
+                        echo "User selected Cancel"
+                        exit
+                    fi
+                    exProxyDomain=$(whiptail --inputbox "Enter your proxy server DOMAIN (Just link -> example.com)" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
+                    tokenstatus=$?
+                    if [ $tokenstatus = 0 ]; then
+                        echo "All right"
+                    else
+                        echo "User selected Cancel"
+                        exit
+                    fi
+                    export NEWT_COLORS='
+                    window=,red
+                    border=white,red
+                    textbox=white,red
+                    button=black,white
+                    '
+                    whiptail --title "WARNING" --msgbox "IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED || RECOMMENDED USE A SINGLE SESSION" 8 78
+                    number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
+                    numberstatus=$?
+                    if [ $numberstatus = 0 ]; then
+                        echo "All right"
+                    else
+                        echo "User selected Cancel"
+                        exit
+                    fi
+                    useExProxy=1
                     ;;
             esac
             cpumax=$(whiptail --inputbox "Enter max % of cpu you want set per page" 8 78 --title "Max Cpu" 3>&1 1>&2 2>&3)
@@ -220,10 +255,33 @@ else
     wget http://f.9hits.com/9hviewer/9hviewer-linux-x64.tar.bz2
     tar -xjvf 9hviewer-linux-x64.tar.bz2
     cd /root/9Hits/9HitsViewer_x64/sessions/
-    isproxy=false
-    for i in `seq 1 $number`;
-    do
-        file="/root/9Hits/9HitsViewer_x64/sessions/156288217488$i.txt"
+    if [ useExProxy == 1 ];then
+        isproxy=false
+        for i in `seq 1 $number`;
+        do
+            file="/root/9Hits/9HitsViewer_x64/sessions/156288217488$i.txt"
+cat > $file <<EOFSS
+{
+  "token": "$token",
+  "note": "",
+  "proxyType": "system",
+  "proxyServer": "",
+  "proxyUser": "",
+  "proxyPw": "",
+  "maxCpu": $cpumax,
+  "useExProxy": $isproxy,
+  "exProxyServer": "$exProxyServer",
+  "exPorxyDomain": "$exPorxyDomain"
+}
+EOFSS
+            isproxy=true
+            proxytype=ssh
+        done
+    else
+        isproxy=false
+        for i in `seq 1 $number`;
+        do
+            file="/root/9Hits/9HitsViewer_x64/sessions/156288217488$i.txt"
 cat > $file <<EOFSS
 {
   "token": "$token",
@@ -238,9 +296,10 @@ cat > $file <<EOFSS
   "exPorxyDomain": ""
 }
 EOFSS
-        isproxy=true
-        proxytype=ssh
-    done
+            isproxy=true
+            proxytype=ssh
+        done
+    fi
     cronfile="/root/9Hits/crontab"
 cat > $cronfile <<EOFSS
 * * * * * /root/9Hits/crashdetect.sh
@@ -249,6 +308,7 @@ $cronvar
 EOFSS
     cd /root
     mv 9Hits-AutoInstall/* /root/9Hits/
+    rm -r 9Hits-AutoInstall/
     cd /root/9Hits/
     crontab crontab
     chmod 777 -R /root/9Hits/

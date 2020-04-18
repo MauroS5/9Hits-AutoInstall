@@ -152,7 +152,7 @@ EOFSS
             echo "All right"
             ;;
         "5)")
-            cronbta -r
+            crontab -r
             /root/9Hits/kill.sh
             cd /root/9Hits/9HitsViewer_x64
             rm 9hbrowser 9hmultiss 9hviewer

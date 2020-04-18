@@ -4,24 +4,27 @@ if [[ $EUID -ne 0 ]]; then
     whiptail --title "ERROR" --msgbox "This script must be run as root" 8 78
     exit
 else
-	os=$(whiptail --title "What do you want to do?" --menu "Choose an option" 16 100 9 \
-	"1)" "Start"   \
-	"2)" "Stop"   \
-	"3)" "Modify / Change session token"        \
-	"4)" "Remove"		3>&2 2>&1 1>&3
-	)
-	case $os in
-		"1)")
-			crontab crontab
-			echo "All right"
-			;;
-		"2)")
-			crontab -r
-			/root/kill.sh
-			echo "All right"
-			;;
-		"3)")
-			rm /root/9Hits/9HitsViewer_x64/sessions/156288217488*
+    os=$(whiptail --title "What do you want to do?" --menu "Choose an option" 16 100 9 \
+    "1)" "Start"   \
+    "2)" "Stop"   \
+    "3)" "Modify / Change session token"        \
+    "4)" "Remove"       \
+    "5)" "Update to last version (No sessions will get lose)"        3>&2 2>&1 1>&3
+    )
+    case $os in
+        "1)")
+            crontab /root/9Hits/crontab
+            echo "All right"
+            ;;
+        "2)")
+            crontab -r
+            /root/9Hits/kill.sh
+            echo "All right"
+            ;;
+        "3)")
+            crontab -r
+            /root/9Hits/kill.sh
+            rm /root/9Hits/9HitsViewer_x64/sessions/156288217488*
  token=$(whiptail --inputbox "Enter your TOKEN" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
             tokenstatus=$?
             if [ $tokenstatus = 0 ]; then
@@ -40,7 +43,7 @@ else
             )
             case $option in
                 "1)")
-                    cronvar="1,31 * * * * /root/9Hits/ill.sh"
+                    cronvar="1,31 * * * * /root/9Hits/kill.sh"
                     ;;
                 "2)")
                     cronvar="1 * * * * /root/9Hits/kill.sh"
@@ -115,10 +118,10 @@ else
                 echo "User selected Cancel"
                 exit
             fi
-	       	isproxy=false
-		    for i in `seq 1 $number`;
-	    	do
-        		file="/root/9Hits/9HitsViewer_x64/sessions/156288217488$i.txt"
+            isproxy=false
+            for i in `seq 1 $number`;
+            do
+                file="/root/9Hits/9HitsViewer_x64/sessions/156288217488$i.txt"
 cat > $file <<EOFSS
 {
   "token": "$token",
@@ -131,22 +134,32 @@ cat > $file <<EOFSS
   "isUse9HitsProxy": $isproxy
 }
 EOFSS
-				isproxy=true
-	        	proxytype=ssh
-	        done
-	        cronfile="/root/9Hits/crontab"
+                isproxy=true
+                proxytype=ssh
+            done
+            cronfile="/root/9Hits/crontab"
 cat > $cronfile <<EOFSS
 * * * * * /root/9Hits/crashdetect.sh
 $cronvar
 58 23 * * * /root/9Hits/reboot.sh
 EOFSS
-			crontab crontab
-			;;
-		"4)")
-			crontab -r
-			/root/kill.sh
-			rm -R /root/9Hits/
-			echo "All right"
-			;;
-	esac
+            crontab crontab
+            ;;
+        "4)")
+            crontab -r
+            /root/9Hits/kill.sh
+            rm -R /root/9Hits/
+            echo "All right"
+            ;;
+        "5)")
+            cronbta -r
+            /root/9Hits/kill.sh
+            cd /root/9Hits/9HitsViewer_x64
+            rm 9hbrowser 9hmultiss 9hviewer
+            wget http://f.9hits.com/9hviewer/9h-patch-linux-x64.zip
+            unzip 9h-patch-linux-x64.zip
+            crontab /root/9Hits/crontab
+            echo "All right"
+            ;;
+    esac
 fi

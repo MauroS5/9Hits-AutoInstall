@@ -28,6 +28,7 @@ else
         token=$2
         number=1
         cpumax=100
+        cronvar="1,31 * * * * /root/9Hits/kill.sh"
     else
         if [[ $1 -eq 1 ]]; then
             os=$(whiptail --title "What Linux Distro do you have?" --menu "Choose an option" 16 100 9 \
@@ -78,7 +79,7 @@ else
             )
             case $option in
                 "1)")
-                    cronvar="1,31 * * * * /root/9Hits/ill.sh"
+                    cronvar="1,31 * * * * /root/9Hits/kill.sh"
                     ;;
                 "2)")
                     cronvar="1 * * * * /root/9Hits/kill.sh"
@@ -179,22 +180,22 @@ else
                     number=$3
                     cpumax=$4
                     case $5 in
-                "1)")
+                "1")
                     cronvar="1,31 * * * * /root/9Hits/kill.sh"
                     ;;
-                "2)")
+                "2")
                     cronvar="1 * * * * /root/9Hits/kill.sh"
                     ;;
-                "3)")
+                "3")
                     cronvar="1 1,3,5,7,9,11,13,15,17,19,21,23 * * * /root/9Hits/kill.sh"
                     ;;
-                "4)")
+                "4")
                     cronvar="1 1,7,13,19 * * * /root/9Hits/kill.sh"
                     ;;
-                "5)")
+                "5")
                     cronvar="1 1,13 * * * /root/9Hits/kill.sh"
                     ;;
-                "6)")
+                "6")
                     cronvar="1 1 * * * /root/9Hits/kill.sh"
                     ;;
                 esac
@@ -232,7 +233,9 @@ cat > $file <<EOFSS
   "proxyUser": "",
   "proxyPw": "",
   "maxCpu": $cpumax,
-  "isUse9HitsProxy": $isproxy
+  "useExProxy": $isproxy,
+  "exProxyServer": "",
+  "exPorxyDomain": ""
 }
 EOFSS
         isproxy=true

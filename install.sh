@@ -100,7 +100,8 @@ else
             option=$(whiptail --title "How much sessions you want" --menu "Choose an option" 16 100 9 \
             "1)" "Use one session"   \
             "2)" "Automatic max session based on system"   \
-            "3)" "Use number you want"  3>&2 2>&1 1>&3
+            "3)" "Use number you want"  \
+            "4)" "Use external server"  3>&2 2>&1 1>&3
             )
             case $option in
                 "1)")
@@ -145,6 +146,31 @@ else
                         exit
                     fi
                     ;;
+                "4)")
+                    exProxyServer=$(whiptail --inputbox "Enter your proxy server link (Just like -> http://example.com/index.php)" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
+                    tokenstatus=$?
+                    if [ $tokenstatus = 0 ]; then
+                        echo "All right"
+                    else
+                        echo "User selected Cancel"
+                        exit
+                    fi
+                    export NEWT_COLORS='
+                    window=,red
+                    border=white,red
+                    textbox=white,red
+                    button=black,white
+                    '
+                    whiptail --title "WARNING" --msgbox "IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED || RECOMMENDED USE A SINGLE SESSION" 8 78
+                    number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
+                    numberstatus=$?
+                    if [ $numberstatus = 0 ]; then
+                        echo "All right"
+                    else
+                        echo "User selected Cancel"
+                        exit
+                    fi
+                    ;;
             esac
             cpumax=$(whiptail --inputbox "Enter max % of cpu you want set per page" 8 78 --title "Max Cpu" 3>&1 1>&2 2>&3)
             cpumaxstatus=$?
@@ -156,56 +182,49 @@ else
             fi
         else
             if [[ $1 -eq 2 ]]; then
-                if [[ $# -eq 5 ]]; then
-                    if [  -f /etc/os-release  ]; then
+                if [  -f /etc/os-release  ]; then
                     dist=$(awk -F= '$1 == "ID" {gsub("\"", ""); print$2}' /etc/os-release)
-                    elif [ -f /etc/redhat-release ]; then
-                        dist=$(awk '{print tolower($1)}' /etc/redhat-release)
-                    else
-                        whiptail --title "ERROR" --msgbox "Sorry, for the moment this script does not support your Distro" 8 78
-                    fi
-                    case "${dist}" in
-                    debian|ubuntu)
-                        os=1
-                        ;;
-                    centos)
-                        os=3
-                        ;;
-                    *)
-                        whiptail --title "ERROR" --msgbox "Sorry, for the moment this script does not support your Distro" 8 78
-                        exit
-                        ;;
-                    esac
-                    token=$2
-                    number=$3
-                    cpumax=$4
-                    case $5 in
-                "1")
-                    cronvar="1,31 * * * * /root/9Hits/kill.sh"
+                elif [ -f /etc/redhat-release ]; then
+                    dist=$(awk '{print tolower($1)}' /etc/redhat-release)
+                else
+                    whiptail --title "ERROR" --msgbox "Sorry, for the moment this script does not support your Distro" 8 78
+                fi
+                case "${dist}" in
+                debian|ubuntu)
+                    os=1
                     ;;
-                "2")
-                    cronvar="1 * * * * /root/9Hits/kill.sh"
+                centos)
+                    os=3
                     ;;
-                "3")
-                    cronvar="1 1,3,5,7,9,11,13,15,17,19,21,23 * * * /root/9Hits/kill.sh"
-                    ;;
-                "4")
-                    cronvar="1 1,7,13,19 * * * /root/9Hits/kill.sh"
-                    ;;
-                "5")
-                    cronvar="1 1,13 * * * /root/9Hits/kill.sh"
-                    ;;
-                "6")
-                    cronvar="1 1 * * * /root/9Hits/kill.sh"
+                *)
+                    whiptail --title "ERROR" --msgbox "Sorry, for the moment this script does not support your Distro" 8 78
+                    exit
                     ;;
                 esac
-                else
-                    whiptail --title "ERROR" --msgbox 'Please add all information: \n 1."Type of install (0, 1, 2)" \n 2."Token"\n 3."Number of sessions" \n 4."maxCpu (Only number, dont use %)" \n 5."Restart time (See readme on GitHub)"' 11 90
-                    exit
-                fi
-            else
-                whiptail --title "ERROR" --msgbox 'Please selet type of install (0, 1, 2)' 11 90
-                exit
+                token=$2
+                number=$3
+                cpumax=$4
+                case $5 in
+                    "1")
+                        cronvar="1,31 * * * * /root/9Hits/kill.sh"
+                        ;;
+                    "2")
+                        cronvar="1 * * * * /root/9Hits/kill.sh"
+                        ;;
+                    "3")
+                        cronvar="1 1,3,5,7,9,11,13,15,17,19,21,23 * * * /root/9Hits/kill.sh"
+                        ;;
+                    "4")
+                        cronvar="1 1,7,13,19 * * * /root/9Hits/kill.sh"
+                        ;;
+                    "5")
+                        cronvar="1 1,13 * * * /root/9Hits/kill.sh"
+                        ;;
+                    "6")
+                        cronvar="1 1 * * * /root/9Hits/kill.sh"
+                        ;;
+                esac
+                exProxyServer=$6
             fi
         fi
     fi
@@ -234,8 +253,8 @@ cat > $file <<EOFSS
   "proxyPw": "",
   "maxCpu": $cpumax,
   "useExProxy": $isproxy,
-  "exProxyServer": "",
-  "exPorxyDomain": ""
+  "exProxyServer": "$exProxyServer",
+  "exPorxyDomain": "$exPorxyDomain"
 }
 EOFSS
         isproxy=true
@@ -249,8 +268,10 @@ $cronvar
 EOFSS
     cd /root
     mv 9Hits-AutoInstall/* /root/9Hits/
+    rm -r 9Hits-AutoInstall/
     cd /root/9Hits/
     crontab crontab
     chmod 777 -R /root/9Hits/
+    echo $useExProxy
     exit
 fi

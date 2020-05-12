@@ -1,6 +1,7 @@
 #!/bin/bash
 mkdir /root/9Hits/
 cd /root/9Hits/
+a=$((1 + RANDOM % 28))
 if [[ $EUID -ne 0 ]]; then
     whiptail --title "ERROR" --msgbox "This script must be run as root" 8 78
     exit
@@ -79,29 +80,31 @@ else
             )
             case $option in
                 "1)")
-                    cronvar="1,31 * * * * /root/9Hits/kill.sh"
+                    let b=a+30
+                    cronvar="$a,$b * * * * /root/9Hits/kill.sh"
                     ;;
                 "2)")
-                    cronvar="1 * * * * /root/9Hits/kill.sh"
+                    cronvar="$a * * * * /root/9Hits/kill.sh"
                     ;;
                 "3)")
-                    cronvar="1 1,3,5,7,9,11,13,15,17,19,21,23 * * * /root/9Hits/kill.sh"
+                    cronvar="$a 1,3,5,7,9,11,13,15,17,19,21,23 * * * /root/9Hits/kill.sh"
                     ;;
                 "4)")
-                    cronvar="1 1,7,13,19 * * * /root/9Hits/kill.sh"
+                    cronvar="$a 1,7,13,19 * * * /root/9Hits/kill.sh"
                     ;;
                 "5)")
-                    cronvar="1 1,13 * * * /root/9Hits/kill.sh"
+                    cronvar="$a 1,13 * * * /root/9Hits/kill.sh"
                     ;;
                 "6)")
-                    cronvar="1 1 * * * /root/9Hits/kill.sh"
+                    cronvar="$a 1 * * * /root/9Hits/kill.sh"
                     ;;
             esac
             option=$(whiptail --title "How much sessions you want" --menu "Choose an option" 16 100 9 \
             "1)" "Use one session"   \
-            "2)" "Automatic max session based on system"   \
-            "3)" "Use number you want"  \
-            "4)" "Use external server"  3>&2 2>&1 1>&3
+            "2)" "Automatic max session based on system (Green Faces)"   \
+            "3)" "Automatic max session based on system (Red Faces)"   \
+            "4)" "Use number you want"  \
+            "5)" "Use external server"  3>&2 2>&1 1>&3
             )
             case $option in
                 "1)")
@@ -136,6 +139,28 @@ else
                     textbox=white,red
                     button=black,white
                     '
+                    whiptail --title "WARNING" --msgbox "THIS CAN GET A YELLOW/RED FACE || RECOMMENDED USE A SINGLE SESSION" 8 78
+                    cores=`nproc --all`
+                    memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                    memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                    let memtotal=$memphy+$memswap
+                    let memtotalgb=$memtotal/100000
+                    let sscorelimit=$cores*9
+                    let ssmemlimit=$memtotalgb*9/10
+                    if [[ $sscorelimit -le $ssmemlimit ]]
+                    then
+                        number=$sscorelimit
+                    else
+                        number=$ssmemlimit
+                    fi
+                    ;;
+                "4)")
+                    export NEWT_COLORS='
+                    window=,red
+                    border=white,red
+                    textbox=white,red
+                    button=black,white
+                    '
                     whiptail --title "WARNING" --msgbox "IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED || RECOMMENDED USE A SINGLE SESSION" 8 78
                     number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
                     numberstatus=$?
@@ -146,7 +171,7 @@ else
                         exit
                     fi
                     ;;
-                "4)")
+                "5)")
                     exProxyServer=$(whiptail --inputbox "Enter your proxy server link (Just like -> http://example.com/index.php)" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
                     tokenstatus=$?
                     if [ $tokenstatus = 0 ]; then
@@ -206,22 +231,23 @@ else
                 cpumax=$4
                 case $5 in
                     "1")
-                        cronvar="1,31 * * * * /root/9Hits/kill.sh"
+                        let b=a+30
+                        cronvar="$a,$b * * * * /root/9Hits/kill.sh"
                         ;;
                     "2")
-                        cronvar="1 * * * * /root/9Hits/kill.sh"
+                        cronvar="$a * * * * /root/9Hits/kill.sh"
                         ;;
                     "3")
-                        cronvar="1 1,3,5,7,9,11,13,15,17,19,21,23 * * * /root/9Hits/kill.sh"
+                        cronvar="$a 1,3,5,7,9,11,13,15,17,19,21,23 * * * /root/9Hits/kill.sh"
                         ;;
                     "4")
-                        cronvar="1 1,7,13,19 * * * /root/9Hits/kill.sh"
+                        cronvar="$a 1,7,13,19 * * * /root/9Hits/kill.sh"
                         ;;
                     "5")
-                        cronvar="1 1,13 * * * /root/9Hits/kill.sh"
+                        cronvar="$a 1,13 * * * /root/9Hits/kill.sh"
                         ;;
                     "6")
-                        cronvar="1 1 * * * /root/9Hits/kill.sh"
+                        cronvar="$a 1 * * * /root/9Hits/kill.sh"
                         ;;
                 esac
                 exProxyServer=$6

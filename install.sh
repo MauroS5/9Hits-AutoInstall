@@ -61,148 +61,218 @@ else
                     else
                         os=3
                     fi
+                ;;
             esac
-            token=$(whiptail --inputbox "Enter your TOKEN" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
-            tokenstatus=$?
-            if [ $tokenstatus = 0 ]; then
+            whiptail --title "Test" --checklist --separate-output "Choose:" 20 78 15 \
+            "9Hits Script" "" on \
+            "Sessions AI" "" on 2>results
+ 
+            while read choice
+            do
+                case $choice in
+                    "Sessions AI") lookup="*/15 * * * * /root/9Hits/lookup.sh"
+                    ;;
+                    "9Hits Script") script=1
+                    ;;
+                    *)
+                    ;;
+                esac
+            done < results
+            if [[ $script -eq 1 ]]; then
+                token=$(whiptail --inputbox "Enter your TOKEN" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
+                tokenstatus=$?
+                if [ $tokenstatus = 0 ]; then
+                        echo "All right"
+                else
+                        echo "User selected Cancel"
+                        exit
+                fi
+                option=$(whiptail --title "How often do you want it to restart" --menu "Choose an option" 16 100 9 \
+                "1)" "Every 30 minutes"   \
+                "2)" "Every 1 hour"     \
+                "3)" "Every 2 hours"    \
+                "4)" "Every 6 houts"    \
+                "5)" "Every 12 hours"   \
+                "6)" "Every day"    3>&2 2>&1 1>&3
+                )
+                case $option in
+                    "1)")
+                        let b=a+30
+                        cronvar="$a,$b * * * * /root/9Hits/kill.sh"
+                        ;;
+                    "2)")
+                        cronvar="$a * * * * /root/9Hits/kill.sh"
+                        ;;
+                    "3)")
+                        cronvar="$a 1,3,5,7,9,11,13,15,17,19,21,23 * * * /root/9Hits/kill.sh"
+                        ;;
+                    "4)")
+                        cronvar="$a 1,7,13,19 * * * /root/9Hits/kill.sh"
+                        ;;
+                    "5)")
+                        cronvar="$a 1,13 * * * /root/9Hits/kill.sh"
+                        ;;
+                    "6)")
+                        cronvar="$a 1 * * * /root/9Hits/kill.sh"
+                        ;;
+                esac
+                option=$(whiptail --title "How much sessions you want" --menu "Choose an option" 16 100 9 \
+                "1)" "Use one session"   \
+                "2)" "Automatic max session based on system (Green Faces)"   \
+                "3)" "Automatic max session based on system (Yellow Faces)"   \
+                "4)" "Automatic max session based on system (Red Faces)"   \
+                "5)" "Automatic max session based on system (MAX POSSIBLE)"   \
+                "6)" "Use number you want"  \
+                "7)" "Use external server"  3>&2 2>&1 1>&3
+                )
+                case $option in
+                    "1)")
+                        number=1
+                        ;;
+                    "2)")
+                        export NEWT_COLORS='
+                        window=,red
+                        border=white,red
+                        textbox=white,red
+                        button=black,white
+                        '
+                        whiptail --title "WARNING" --msgbox "This feature is under development and can not works as expected, please report any error" 8 78
+                        cores=`getconf _NPROCESSORS_ONLN`
+                        memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                        memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                        let memtotal=$memphy+$memswap
+                        let memtotalgb=$memtotal/100000
+                        let sscorelimit=$cores*3
+                        let ssmemlimit=$memtotalgb*3/10
+                        if [[ $sscorelimit -le $ssmemlimit ]]
+                        then
+                            number=$sscorelimit
+                        else
+                            number=$ssmemlimit
+                        fi
+                        color=1
+                        ;;
+                    "3)")
+                        export NEWT_COLORS='
+                        window=,red
+                        border=white,red
+                        textbox=white,red
+                        button=black,white
+                        '
+                        whiptail --title "WARNING" --msgbox "This feature is under development and can not works as expected, please report any error" 8 78
+                        cores=`getconf _NPROCESSORS_ONLN`
+                        memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                        memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                        let memtotal=$memphy+$memswap
+                        let memtotalgb=$memtotal/100000
+                        let sscorelimit=$cores*6
+                        let ssmemlimit=$memtotalgb*6/10
+                        if [[ $sscorelimit -le $ssmemlimit ]]
+                        then
+                            number=$sscorelimit
+                        else
+                            number=$ssmemlimit
+                        fi
+                        color=2
+                        ;;
+                    "4)")
+                        export NEWT_COLORS='
+                        window=,red
+                        border=white,red
+                        textbox=white,red
+                        button=black,white
+                        '
+                        whiptail --title "WARNING" --msgbox "This feature is under development and can not works as expected, please report any error" 8 78
+                        cores=`getconf _NPROCESSORS_ONLN`
+                        memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                        memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                        let memtotal=$memphy+$memswap
+                        let memtotalgb=$memtotal/100000
+                        let sscorelimit=$cores*8
+                        let ssmemlimit=$memtotalgb*8/10
+                        if [[ $sscorelimit -le $ssmemlimit ]]
+                        then
+                            number=$sscorelimit
+                        else
+                            number=$ssmemlimit
+                        fi
+                        color=3
+                        ;;
+                    "5)")
+                        export NEWT_COLORS='
+                        window=,red
+                        border=white,red
+                        textbox=white,red
+                        button=black,white
+                        '
+                        whiptail --title "WARNING" --msgbox "This feature is under development and can not works as expected, please report any error\n\nYOU CAN GET REJECTED FACES AND YOUR SYSTEM WILL BE UNABLE TO DO NOTHING MORE EXPECT 9HITS" 15 78
+                        cores=`getconf _NPROCESSORS_ONLN`
+                        memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                        memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                        let memtotal=$memphy+$memswap
+                        let memtotalgb=$memtotal/100000
+                        let sscorelimit=$cores*9
+                        let ssmemlimit=$memtotalgb*9/10
+                        if [[ $sscorelimit -le $ssmemlimit ]]
+                        then
+                            number=$sscorelimit
+                        else
+                            number=$ssmemlimit
+                        fi
+                        color=4
+                        ;;  
+                    "6)")
+                        export NEWT_COLORS='
+                        window=,red
+                        border=white,red
+                        textbox=white,red
+                        button=black,white
+                        '
+                        whiptail --title "WARNING" --msgbox "IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED || RECOMMENDED USE A SINGLE SESSION" 8 78
+                        number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
+                        numberstatus=$?
+                        if [ $numberstatus = 0 ]; then
+                            echo "All right"
+                        else
+                            echo "User selected Cancel"
+                            exit
+                        fi
+                        ;;
+                    "7)")
+                        exProxyServer=$(whiptail --inputbox "Enter your proxy server link (Just like -> http://example.com/index.php)" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
+                        tokenstatus=$?
+                        if [ $tokenstatus = 0 ]; then
+                            echo "All right"
+                        else
+                            echo "User selected Cancel"
+                            exit
+                        fi
+                        export NEWT_COLORS='
+                        window=,red
+                        border=white,red
+                        textbox=white,red
+                        button=black,white
+                        '
+                        whiptail --title "WARNING" --msgbox "IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED || RECOMMENDED USE A SINGLE SESSION" 8 78
+                        number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
+                        numberstatus=$?
+                        if [ $numberstatus = 0 ]; then
+                            echo "All right"
+                        else
+                            echo "User selected Cancel"
+                            exit
+                        fi
+                        ;;
+                esac
+                cpumax=$(whiptail --inputbox "Enter max % of cpu you want set per page" 8 78 --title "Max Cpu" 3>&1 1>&2 2>&3)
+                cpumaxstatus=$?
+                if [ $cpumaxstatus = 0 ]; then
                     echo "All right"
-            else
+                else
                     echo "User selected Cancel"
                     exit
-            fi
-            option=$(whiptail --title "How often do you want it to restart" --menu "Choose an option" 16 100 9 \
-            "1)" "Every 30 minutes"   \
-            "2)" "Every 1 hour"     \
-            "3)" "Every 2 hours"    \
-            "4)" "Every 6 houts"    \
-            "5)" "Every 12 hours"   \
-            "6)" "Every day"    3>&2 2>&1 1>&3
-            )
-            case $option in
-                "1)")
-                    let b=a+30
-                    cronvar="$a,$b * * * * /root/9Hits/kill.sh"
-                    ;;
-                "2)")
-                    cronvar="$a * * * * /root/9Hits/kill.sh"
-                    ;;
-                "3)")
-                    cronvar="$a 1,3,5,7,9,11,13,15,17,19,21,23 * * * /root/9Hits/kill.sh"
-                    ;;
-                "4)")
-                    cronvar="$a 1,7,13,19 * * * /root/9Hits/kill.sh"
-                    ;;
-                "5)")
-                    cronvar="$a 1,13 * * * /root/9Hits/kill.sh"
-                    ;;
-                "6)")
-                    cronvar="$a 1 * * * /root/9Hits/kill.sh"
-                    ;;
-            esac
-            option=$(whiptail --title "How much sessions you want" --menu "Choose an option" 16 100 9 \
-            "1)" "Use one session"   \
-            "2)" "Automatic max session based on system (Green Faces)"   \
-            "3)" "Automatic max session based on system (Red Faces)"   \
-            "4)" "Use number you want"  \
-            "5)" "Use external server"  3>&2 2>&1 1>&3
-            )
-            case $option in
-                "1)")
-                    number=1
-                    ;;
-                "2)")
-                    export NEWT_COLORS='
-                    window=,red
-                    border=white,red
-                    textbox=white,red
-                    button=black,white
-                    '
-                    whiptail --title "WARNING" --msgbox "THIS CAN GET A YELLOW/RED FACE || RECOMMENDED USE A SINGLE SESSION" 8 78
-                    cores=`nproc --all`
-                    memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
-                    memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
-                    let memtotal=$memphy+$memswap
-                    let memtotalgb=$memtotal/100000
-                    let sscorelimit=$cores*4
-                    let ssmemlimit=$memtotalgb*4/10
-                    if [[ $sscorelimit -le $ssmemlimit ]]
-                    then
-                        number=$sscorelimit
-                    else
-                        number=$ssmemlimit
-                    fi
-                    ;;
-                "3)")
-                    export NEWT_COLORS='
-                    window=,red
-                    border=white,red
-                    textbox=white,red
-                    button=black,white
-                    '
-                    whiptail --title "WARNING" --msgbox "THIS CAN GET A YELLOW/RED FACE || RECOMMENDED USE A SINGLE SESSION" 8 78
-                    cores=`nproc --all`
-                    memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
-                    memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
-                    let memtotal=$memphy+$memswap
-                    let memtotalgb=$memtotal/100000
-                    let sscorelimit=$cores*9
-                    let ssmemlimit=$memtotalgb*9/10
-                    if [[ $sscorelimit -le $ssmemlimit ]]
-                    then
-                        number=$sscorelimit
-                    else
-                        number=$ssmemlimit
-                    fi
-                    ;;
-                "4)")
-                    export NEWT_COLORS='
-                    window=,red
-                    border=white,red
-                    textbox=white,red
-                    button=black,white
-                    '
-                    whiptail --title "WARNING" --msgbox "IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED || RECOMMENDED USE A SINGLE SESSION" 8 78
-                    number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
-                    numberstatus=$?
-                    if [ $numberstatus = 0 ]; then
-                        echo "All right"
-                    else
-                        echo "User selected Cancel"
-                        exit
-                    fi
-                    ;;
-                "5)")
-                    exProxyServer=$(whiptail --inputbox "Enter your proxy server link (Just like -> http://example.com/index.php)" 8 78 --title "TOKEN" 3>&1 1>&2 2>&3)
-                    tokenstatus=$?
-                    if [ $tokenstatus = 0 ]; then
-                        echo "All right"
-                    else
-                        echo "User selected Cancel"
-                        exit
-                    fi
-                    export NEWT_COLORS='
-                    window=,red
-                    border=white,red
-                    textbox=white,red
-                    button=black,white
-                    '
-                    whiptail --title "WARNING" --msgbox "IF YOU SET EXCESIVE AMOUNT OF SESSIONS THIS SESSIONS MAY BE BLOCKED || RECOMMENDED USE A SINGLE SESSION" 8 78
-                    number=$(whiptail --inputbox "ENTER NUMBER OF SESSIONS" 8 78 --title "SESSIONS" 3>&1 1>&2 2>&3)
-                    numberstatus=$?
-                    if [ $numberstatus = 0 ]; then
-                        echo "All right"
-                    else
-                        echo "User selected Cancel"
-                        exit
-                    fi
-                    ;;
-            esac
-            cpumax=$(whiptail --inputbox "Enter max % of cpu you want set per page" 8 78 --title "Max Cpu" 3>&1 1>&2 2>&3)
-            cpumaxstatus=$?
-            if [ $cpumaxstatus = 0 ]; then
-                echo "All right"
+                fi
             else
-                echo "User selected Cancel"
                 exit
             fi
         else
@@ -250,47 +320,117 @@ else
                         cronvar="$a 1 * * * /root/9Hits/kill.sh"
                         ;;
                 esac
-                exProxyServer=$6
+                if [[ $6 -ne 0 ]]; then
+                    lookup="*/15 * * * * /root/9Hits/lookup.sh"
+                    case $6 in
+                        "1")
+                            cores=`getconf _NPROCESSORS_ONLN`
+                            memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                            memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                            let memtotal=$memphy+$memswap
+                            let memtotalgb=$memtotal/100000
+                            let sscorelimit=$cores*3
+                            let ssmemlimit=$memtotalgb*3/10
+                            if [[ $sscorelimit -le $ssmemlimit ]]
+                            then
+                                number=$sscorelimit
+                            else
+                                number=$ssmemlimit
+                            fi
+                            color=1
+                            ;;
+                        "2")
+                            cores=`getconf _NPROCESSORS_ONLN`
+                            memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                            memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                            let memtotal=$memphy+$memswap
+                            let memtotalgb=$memtotal/100000
+                            let sscorelimit=$cores*6
+                            let ssmemlimit=$memtotalgb*6/10
+                            if [[ $sscorelimit -le $ssmemlimit ]]
+                            then
+                                number=$sscorelimit
+                            else
+                                number=$ssmemlimit
+                            fi
+                            color=2
+                            ;;
+                        "3")
+                            cores=`getconf _NPROCESSORS_ONLN`
+                            memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                            memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                            let memtotal=$memphy+$memswap
+                            let memtotalgb=$memtotal/100000
+                            let sscorelimit=$cores*8
+                            let ssmemlimit=$memtotalgb*8/10
+                            if [[ $sscorelimit -le $ssmemlimit ]]
+                            then
+                                number=$sscorelimit
+                            else
+                                number=$ssmemlimit
+                            fi
+                            color=3
+                            ;;
+                        "4")
+                            cores=`getconf _NPROCESSORS_ONLN`
+                            memphy=`grep MemTotal /proc/meminfo | awk '{print $2}'`
+                            memswap=`grep SwapTotal /proc/meminfo | awk '{print $2}'`
+                            let memtotal=$memphy+$memswap
+                            let memtotalgb=$memtotal/100000
+                            let sscorelimit=$cores*9
+                            let ssmemlimit=$memtotalgb*9/10
+                            if [[ $sscorelimit -le $ssmemlimit ]]
+                            then
+                                number=$sscorelimit
+                            else
+                                number=$ssmemlimit
+                            fi
+                            color=4
+                            ;;
+                    esac
+                fi
+                note=$7
+                exProxyServer=$8
             fi
         fi
     fi
+    echo os=$os > parameters && echo token=$token >> parameters && echo number=$number >> parameters && echo cpumax=$cpumax >> parameters && echo exProxyServer=$exProxyServer >> parameters && echo color=$color >> parameters && echo note=$note >> parameters
     if [ $os == "1" ] || [ $os == "2" ]; then
         apt-get update
         apt-get upgrade -y
-        apt-get install -y unzip libcanberra-gtk-module curl libxss1 xvfb htop sed tar libxtst6 libnss3 wget psmisc
+        apt-get install -y unzip libcanberra-gtk-module curl libxss1 xvfb htop sed tar libxtst6 libnss3 wget psmisc bc
     else
         yum -y update
         yum install -y unzip curl xorg-x11-server-Xvfb sed tar Xvfb wget bzip2 libXcomposite-0.4.4-4.1.el7.x86_64 libXScrnSaver libXcursor-1.1.15-1.el7.x86_64 libXi-1.7.9-1.el7.x86_64 libXtst-1.2.3-1.el7.x86_64 fontconfig-2.13.0-4.3.el7.x86_64 libXrandr-1.5.1-2.el7.x86_64 alsa-lib-1.1.6-2.el7.x86_64 pango-1.42.4-1.el7.x86_64 atk-2.28.1-1.el7.x86_64 psmisc
     fi
-    wget http://f.9hits.com/9hviewer/9hviewer-linux-x64.tar.bz2
+    wget https://rs.9hits.com/9hviewer/9hviewer-linux-x64.tar.bz2
     tar -xjvf 9hviewer-linux-x64.tar.bz2
     cd /root/9Hits/9HitsViewer_x64/sessions/
     isproxy=false
     for i in `seq 1 $number`;
     do
-        file="/root/9Hits/9HitsViewer_x64/sessions/156288217488$i.txt"
+        file="/root/9Hits/9HitsViewer_x64/sessions/$i.txt"
 cat > $file <<EOFSS
 {
   "token": "$token",
-  "note": "",
+  "note": "$note",
   "proxyType": "system",
   "proxyServer": "",
   "proxyUser": "",
   "proxyPw": "",
   "maxCpu": $cpumax,
   "useExProxy": $isproxy,
-  "exProxyServer": "$exProxyServer",
-  "exPorxyDomain": "$exPorxyDomain"
+  "exProxyServer": "$exProxyServer"
 }
 EOFSS
         isproxy=true
-        proxytype=ssh
     done
     cronfile="/root/9Hits/crontab"
 cat > $cronfile <<EOFSS
 * * * * * /root/9Hits/crashdetect.sh
 $cronvar
 58 23 * * * /root/9Hits/reboot.sh
+$lookup
 EOFSS
     cd /root
     mv 9Hits-AutoInstall/* /root/9Hits/
@@ -298,6 +438,5 @@ EOFSS
     cd /root/9Hits/
     crontab crontab
     chmod 777 -R /root/9Hits/
-    echo $useExProxy
     exit
 fi

@@ -70,7 +70,7 @@ else
             while read choice
             do
                 case $choice in
-                    "Sessions AI") lookup="*/15 * * * * /root/9Hits/lookup.sh"
+                    "Sessions AI") lookup="$a * * * * /root/9Hits/lookup.sh"
                     ;;
                     "9Hits Script") script=1
                     ;;
@@ -321,7 +321,7 @@ else
                         ;;
                 esac
                 if [[ $6 -ne 0 ]]; then
-                    lookup="*/15 * * * * /root/9Hits/lookup.sh"
+                    lookup="$a * * * * /root/9Hits/lookup.sh"
                     case $6 in
                         "1")
                             cores=`getconf _NPROCESSORS_ONLN`

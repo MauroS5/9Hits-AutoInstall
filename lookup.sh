@@ -1,4 +1,5 @@
 #!/bin/bash
+sleep 10
 cd /root/9Hits/
 source parameters
 y=$(cat /proc/loadavg | awk '{print $3}')

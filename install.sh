@@ -63,7 +63,7 @@ else
                     fi
                 ;;
             esac
-            whiptail --title "Test" --checklist --separate-output "Choose:" 20 78 15 \
+            whiptail --title "Select" --checklist --separate-output "Choose:" 20 78 15 \
             "9Hits Script" "" on \
             "Sessions AI" "" on 2>results
  
@@ -272,6 +272,23 @@ else
                     echo "User selected Cancel"
                     exit
                 fi
+                adultpages="deny"
+                pupups="deny"
+            whiptail --title "Select" --checklist --separate-output "Choose:" 20 78 15 \
+            "show adult pages" "" on \
+            "show popups" "" on 2>results
+ 
+            while read choice
+            do
+                case $choice in
+                    "show adult pages") adultpages="allow"
+                    ;;
+                    "show popups") pupups="allow"
+                    ;;
+                    *)
+                    ;;
+                esac
+            done < results
             else
                 exit
             fi
@@ -391,6 +408,8 @@ else
                 fi
                 note=$7
                 exProxyServer=$8
+                adultpages="allow"
+                pupups="allow"
             fi
         fi
     fi
@@ -398,32 +417,40 @@ else
     if [ $os == "1" ] || [ $os == "2" ]; then
         apt-get update
         apt-get upgrade -y
-        apt-get install -y unzip libcanberra-gtk-module curl libxss1 xvfb htop sed tar libxtst6 libnss3 wget psmisc bc
+        apt-get install -y unzip libcanberra-gtk-module curl libxss1 xvfb htop sed tar libxtst6 libnss3 wget psmisc bc libgtk-3-0 libgbm-dev libatspi2.0-0 libatomic1
     else
         yum -y update
         yum install -y unzip curl xorg-x11-server-Xvfb sed tar Xvfb wget bzip2 libXcomposite-0.4.4-4.1.el7.x86_64 libXScrnSaver libXcursor-1.1.15-1.el7.x86_64 libXi-1.7.9-1.el7.x86_64 libXtst-1.2.3-1.el7.x86_64 fontconfig-2.13.0-4.3.el7.x86_64 libXrandr-1.5.1-2.el7.x86_64 alsa-lib-1.1.6-2.el7.x86_64 pango-1.42.4-1.el7.x86_64 atk-2.28.1-1.el7.x86_64 psmisc
     fi
-    wget https://rs.9hits.com/9hviewer/9hviewer-linux-x64.tar.bz2
-    tar -xjvf 9hviewer-linux-x64.tar.bz2
+    wget https://rs.9hits.com/9hviewer/9hits-linux-x64.tar.bz2
+    tar -xjvf 9hits-linux-x64.tar.bz2
+    mv /root/9Hits/9hits-linux-x64 /root/9Hits/9HitsViewer_x64
+    cd /root/9Hits/9HitsViewer_x64/
+    settings="/root/9Hits/9HitsViewer_x64/settings.json"
+cat > $settings <<EOFSS
+    {"hiddenColumns":[],"token":"$token","browser":"hide","popups":"$pupups","adult":"$adultpages","autoStart":"yes"}
+EOFSS
+
+
     cd /root/9Hits/9HitsViewer_x64/sessions/
-    isproxy=false
+    isproxy=system
     for i in `seq 1 $number`;
     do
-        file="/root/9Hits/9HitsViewer_x64/sessions/$i.txt"
+        file="/root/9Hits/9HitsViewer_x64/sessions/$i.json"
 cat > $file <<EOFSS
 {
-  "token": "$token",
-  "note": "$note",
-  "proxyType": "system",
-  "proxyServer": "",
-  "proxyUser": "",
-  "proxyPw": "",
-  "maxCpu": $cpumax,
-  "useExProxy": $isproxy,
-  "exProxyServer": "$exProxyServer"
+    "name": "$i",
+    "note": "$note",
+    "proxy": {
+        "type": "$isproxy",
+        "server": "",
+        "user": "",
+        "password": "",
+        "exServer": "$exProxyServer"
+    }
 }
 EOFSS
-        isproxy=true
+        isproxy=exproxy
     done
     cronfile="/root/9Hits/crontab"
 cat > $cronfile <<EOFSS

@@ -2,6 +2,7 @@
 mkdir /root/9Hits/
 cd /root/9Hits/
 a=$((1 + RANDOM % 28))
+URL="https://rs.9hits.com/9hviewer/9hits-linux-x64.tar.bz2"
 if [[ $EUID -ne 0 ]]; then
     whiptail --title "ERROR" --msgbox "This script must be run as root" 8 78
     exit
@@ -408,6 +409,12 @@ else
                 fi
                 note=$7
                 exProxyServer=$8
+                if [ -z "$9" ]
+                then
+                    URL="https://rs.9hits.com/9hviewer/9hits-linux-x64.tar.bz2"
+                else
+                    URL=$9
+                fi
                 adultpages="allow"
                 pupups="allow"
             fi
@@ -422,7 +429,7 @@ else
         yum -y update
         yum install -y unzip curl xorg-x11-server-Xvfb sed tar Xvfb wget bzip2 libXcomposite-0.4.4-4.1.el7.x86_64 libXScrnSaver libXcursor-1.1.15-1.el7.x86_64 libXi-1.7.9-1.el7.x86_64 libXtst-1.2.3-1.el7.x86_64 fontconfig-2.13.0-4.3.el7.x86_64 libXrandr-1.5.1-2.el7.x86_64 alsa-lib-1.1.6-2.el7.x86_64 pango-1.42.4-1.el7.x86_64 atk-2.28.1-1.el7.x86_64 psmisc
     fi
-    wget https://rs.9hits.com/9hviewer/9hits-linux-x64.tar.bz2
+    wget -O 9hits-linux-x64.tar.bz2 $URL
     tar -xjvf 9hits-linux-x64.tar.bz2
     mv /root/9Hits/9hits-linux-x64 /root/9Hits/9HitsViewer_x64
     cd /root/9Hits/9HitsViewer_x64/

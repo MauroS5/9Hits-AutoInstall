@@ -54,6 +54,28 @@ Example command(Custom URL):
 
 yum -y update || apt update && yum -y install git whiptail || apt install -y git whiptail && cd /root && git clone https://github.com/MauroS5/9Hits-AutoInstall.git && chmod -R 777 9Hits-AutoInstall && 9Hits-AutoInstall/install.sh "2" "d2lpb0dc88554721ca9c3a6a1ef710b3" "15" "10" "1" "2" "vps1" "" "https://rs.9hits.com/9hviewer/9hits-linux-x64-2.5.1.tar.bz2"
 
+📌 DOCKER-COMPOSE ->
+
+version: '3'
+services:
+  9hits:
+    image: mauros5/9hits_autoinstall:latest
+    container_name: 9hits
+    tty: true
+    network_mode: host
+    environment:
+      - token=d2lpb0dc88554721ca9c3a6a1ef710b3
+      - sessions=10
+      - maxcpu=1
+      - restart=1
+      - name=vps1
+      - url=https://rs.9hits.com/9hviewer/9hits-linux-x64-2.5.1.tar.bz2
+      - exProxyServer=
+
+📌 DOCKER ->
+
+docker run -d --name=9hits -e "token=d2lpb0dc88554721ca9c3a6a1ef710b3" -e "sessions=10" -e "maxcpu=1" -e "restart=1" -e "name=vps2" -e "url=https://rs.9hits.com/9hviewer/9hits-linux-x64-2.5.1.tar.bz2" --network="host" mauros5/9hits_autoinstall
+
 👉 Restart time have 6 levels:
 
 1 "Every 30 minutes"

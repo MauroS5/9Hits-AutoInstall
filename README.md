@@ -71,10 +71,13 @@ Example command(Custom URL):
           - name=vps1
           - url=https://rs.9hits.com/9hviewer/9hits-linux-x64-2.5.1.tar.bz2
           - exProxyServer=
+          - allowAdult=allow
+          - allowPopups=allow
+          - allowMining=deny
 
 📌 DOCKER ->
 
->docker run -d --name=9hits -e "token=d2lpb0dc88554721ca9c3a6a1ef710b3" -e "sessions=10" -e "maxcpu=1" -e "restart=1" -e "name=vps2" -e "url=https://rs.9hits.com/9hviewer/9hits-linux-x64-2.5.1.tar.bz2" --network="host" mauros5/9hits_autoinstall
+>docker run -d --name=9hits -e "token=d2lpb0dc88554721ca9c3a6a1ef710b3" -e "sessions=10" -e "maxcpu=1" -e "restart=1" -e "name=vps2" -e "url=https://rs.9hits.com/9hviewer/9hits-linux-x64-2.5.1.tar.bz2" -e "allowAdult=allow" -e "allowPopups=allow" -e "allowMining=deny" --network="host" mauros5/9hits_autoinstall
 
 👉 Restart time have 6 levels:
 

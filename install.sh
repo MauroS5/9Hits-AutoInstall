@@ -422,19 +422,19 @@ else
                 then
                     pupups="allow"
                 else
-                    URL=$10
+                    pupups=$10
                 fi
                 if [ -z "$11" ]
                 then
                     adultpages="allow"
                 else
-                    URL=$11
+                    adultpages=$11
                 fi
                 if [ -z "$12" ]
                 then
                     coinMn="deny"
                 else
-                    URL=$12
+                    coinMn=$12
                 fi
             fi
         fi

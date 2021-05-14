@@ -418,23 +418,23 @@ else
                 else
                     URL=$9
                 fi
-                if [ -z "$10" ]
+                if [ -z "${10}" ]
                 then
                     pupups="allow"
                 else
-                    pupups=$10
+                    pupups=${10}
                 fi
-                if [ -z "$11" ]
+                if [ -z "${11}" ]
                 then
                     adultpages="allow"
                 else
-                    adultpages=$11
+                    adultpages=${11}
                 fi
-                if [ -z "$12" ]
+                if [ -z "${12}" ]
                 then
                     coinMn="deny"
                 else
-                    coinMn=$12
+                    coinMn=${12}
                 fi
             fi
         fi

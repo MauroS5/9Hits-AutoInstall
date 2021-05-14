@@ -2,7 +2,7 @@
 source parameters
 source parametersBack
 
-if [ ! -f "parametersBack" ] || [ "$token" != "$tokenBack" ] || [ "$sessions" != "$sessionsBack" ] || [ "$maxcpu" != "$maxcpuBack" ] || [ "$exProxyServer" != "$exProxyServerBack" ] || [ "$restart" != "$restartBack" ] || [ "$name" != "$nameBack" ] || [ "$url" != "$urlBack" ]; then
+if [ ! -f "parametersBack" ] || [ "$token" != "$tokenBack" ] || [ "$sessions" != "$sessionsBack" ] || [ "$maxcpu" != "$maxcpuBack" ] || [ "$exProxyServer" != "$exProxyServerBack" ] || [ "$restart" != "$restartBack" ] || [ "$name" != "$nameBack" ] || [ "$url" != "$urlBack" ] || [ "$allowAdult" != "$allowAdultBack" ] || [ "$allowPopups" != "$allowPopupsBack" ] || [ "$allowMining" != "$allowMiningBack" ]; then
 if [ "$url" != "$urlBack" ]; then
     cd /root/9Hits/
     rm -rf 9HitsViewer_x64 9hits-linux-x64.tar.bz2
@@ -11,7 +11,7 @@ if [ "$url" != "$urlBack" ]; then
     mv /root/9Hits/9hits-linux-x64 /root/9Hits/9HitsViewer_x64
 fi
 cd /root/9Hits/
-echo tokenBack=$token > parametersBack && echo sessionsBack=$sessions >> parametersBack && echo maxcpuBack=$maxcpu >> parametersBack && echo exProxyServerBack=$exProxyServer >> parametersBack && echo restartBack=$restart >> parametersBack && echo nameBack=$name >> parametersBack && echo urlBack=$url >> parametersBack
+echo tokenBack=$token > parametersBack && echo sessionsBack=$sessions >> parametersBack && echo maxcpuBack=$maxcpu >> parametersBack && echo exProxyServerBack=$exProxyServer >> parametersBack && echo restartBack=$restart >> parametersBack && echo nameBack=$name >> parametersBack && echo urlBack=$url >> parametersBack && echo allowAdultBack=$allowAdult >> parametersBack && echo allowPopupsBack=$allowPopups >> parametersBack && echo allowMiningBack=$allowMining >> parametersBack
 cd /root/9Hits/9HitsViewer_x64/
 a=$((1 + RANDOM % 28))
 case $restart in
@@ -35,11 +35,9 @@ case $restart in
         cronvar="$a 1 * * * /root/9Hits/kill.sh"
         ;;
 esac
-adultpages="allow"
-pupups="allow"
 settings="/root/9Hits/9HitsViewer_x64/settings.json"
 cat > $settings <<EOFSS
-    {"hiddenColumns":[],"token":"$token","browser":"hide","popups":"$pupups","adult":"$adultpages","autoStart":"yes"}
+    {"hiddenColumns":[],"token":"$token","browser":"hide","popups":"$allowPopups","adult":"$allowAdult","coinMn":"$allowMining","autoStart":"yes"}
 EOFSS
 cd /root/9Hits/9HitsViewer_x64/sessions/
 rm -f ss*

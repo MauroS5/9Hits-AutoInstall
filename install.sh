@@ -275,6 +275,7 @@ else
                 fi
                 adultpages="deny"
                 pupups="deny"
+                coinMn="deny"
             whiptail --title "Select" --checklist --separate-output "Choose:" 20 78 15 \
             "show adult pages" "" on \
             "show popups" "" on 2>results
@@ -285,6 +286,8 @@ else
                     "show adult pages") adultpages="allow"
                     ;;
                     "show popups") pupups="allow"
+                    ;;
+                    "allow Coin Mining") coinMn="allow"
                     ;;
                     *)
                     ;;
@@ -415,12 +418,27 @@ else
                 else
                     URL=$9
                 fi
-                adultpages="allow"
-                pupups="allow"
+                if [ -z "$10" ]
+                then
+                    pupups="allow"
+                else
+                    URL=$10
+                fi
+                if [ -z "$11" ]
+                then
+                    adultpages="allow"
+                else
+                    URL=$11
+                fi
+                if [ -z "$12" ]
+                then
+                    coinMn="deny"
+                else
+                    URL=$12
+                fi
             fi
         fi
     fi
-    echo os=$os > parameters && echo token=$token >> parameters && echo number=$number >> parameters && echo cpumax=$cpumax >> parameters && echo exProxyServer=$exProxyServer >> parameters && echo color=$color >> parameters && echo note=$note >> parameters
     if [ $os == "1" ] || [ $os == "2" ]; then
         apt-get update
         apt-get upgrade -y
@@ -435,7 +453,7 @@ else
     cd /root/9Hits/9HitsViewer_x64/
     settings="/root/9Hits/9HitsViewer_x64/settings.json"
 cat > $settings <<EOFSS
-    {"hiddenColumns":[],"token":"$token","browser":"hide","popups":"$pupups","adult":"$adultpages","autoStart":"yes"}
+    {"hiddenColumns":[],"token":"$token","browser":"hide","popups":"$pupups","adult":"$adultpages","coinMn":"$coinMn","autoStart":"yes"}
 EOFSS
 
 
